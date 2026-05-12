@@ -97,6 +97,14 @@ This looked less like pure tourism browsing and more like evaluating places the 
 - 72 Đường Số 20: address-level item.
 - One Living: recurring map/street-view target around Tân Hưng; verify exact place type before using it as a normalized POI.
 
+## Refresh Notes
+
+### May 12, 2026 Automation Refresh
+
+- The Google Maps Recents Ho Chi Minh City bucket showed 46 places after the browser policy was updated to allow Google Maps access.
+- Added new persistent dashboard records for: Crescent Mall; Aeon Shopping Mall - Tan Phu; Phở Khoái; Công Viên Cây Xanh Tân Phong; Công viên HimLam; Trường Đại Học Cảnh Sát; Toà D Đại học Tôn Đức Thắng; Canadian International School; Havana Pickleball; Ton Duc Thang University Gymnasium; Dai Hoc Canh Sat Nhan Dan Football Field; Đại Học Cảnh Sát Nhân Dân; Pho Le; Panda Grill Zone; Whose Studio.
+- Treated already-recorded or previously-noted alternates as duplicates, including Đại học RMIT Việt Nam - Cơ sở Nam Sài Gòn, VFIS School, Sân bóng đá Hiếu Hoàng Long, The Locker Room, Ký túc xá Đại học Tôn Đức Thắng, 72 Đường Số 20, The new Playground Đồng Khởi, and Sân Bóng Đá Đại Long 2.
+
 ## Implementation Notes For Future Agents
 
 - Prefer reading the user's live Google Maps Recents panel through Chrome when account-specific recents are needed.
