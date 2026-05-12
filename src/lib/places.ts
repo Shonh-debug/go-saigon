@@ -19,6 +19,12 @@ export function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function canonicalPlaceKey(place: Place) {
+  if (place.googleMapsUri) return place.googleMapsUri;
+  if (place.address) return `${slugify(place.name)}:${slugify(place.address)}`;
+  return place.id;
+}
+
 export function placeFromSeed(seed: PlaceSeed): Place {
   return {
     id: slugify(seed.name),
@@ -38,7 +44,18 @@ export function placeFromSeed(seed: PlaceSeed): Place {
   };
 }
 
-export const seedPlaces: Place[] = placeSeeds.map(placeFromSeed);
+export function dedupePlaces(places: Place[]) {
+  const seen = new Set<string>();
+
+  return places.filter((place) => {
+    const key = canonicalPlaceKey(place);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+export const seedPlaces: Place[] = dedupePlaces(placeSeeds.map(placeFromSeed));
 
 export function popularityTier(place: Place) {
   const count = place.userRatingCount ?? 0;

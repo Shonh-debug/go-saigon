@@ -1,5 +1,5 @@
 import { placeSeeds } from "./placeSeeds";
-import { slugify } from "./places";
+import { dedupePlaces, slugify } from "./places";
 import type { Place, PlaceSeed } from "./types";
 
 type GooglePlace = {
@@ -81,5 +81,5 @@ export async function syncPlaces() {
     places.push(await searchPlace(seed));
   }
 
-  return places;
+  return dedupePlaces(places);
 }
