@@ -2,7 +2,7 @@
 
 Maps Pulse Saigon is a neon city-atlas dashboard for analyzing recent Google Maps place activity in Ho Chi Minh City. It turns a seed set of searched or viewed places into an interactive analytics surface with category breakdowns, popularity signals, city clusters, and direct Google Maps links.
 
-The current version is built as a polished local demo for a future Vercel deployment. It uses a 43-place Ho Chi Minh City recents dataset as the baseline and can manually enrich those places with Google Places API data through a server-side sync endpoint.
+The current version is built as a polished local demo for a future Vercel deployment. It uses a growing dataset of recent locations in Ho Chi Minh City as the baseline and can manually enrich those places with Google Places API data through a server-side sync endpoint.
 
 ## What It Does
 
