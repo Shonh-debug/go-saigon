@@ -19,12 +19,4 @@ npm run dev
 
 Open `http://127.0.0.1:3000`.
 
-## Environment
 
-Create `.env.local`:
-
-```env
-GOOGLE_MAPS_API_KEY=
-```
-
-Never expose this key in browser code or commit it to GitHub.
