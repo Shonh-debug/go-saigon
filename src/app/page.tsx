@@ -79,7 +79,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   );
 }
 
-function Header({ onSync, syncState, syncedAt }: { onSync: () => void; syncState: SyncState; syncedAt?: string }) {
+function Header({ onSync, placeCount, syncState, syncedAt }: { onSync: () => void; placeCount: number; syncState: SyncState; syncedAt?: string }) {
   return (
     <header className="glass relative overflow-hidden rounded-[28px] p-5 md:p-7">
       <div className="absolute inset-0 atlas-grid opacity-40" />
@@ -119,7 +119,7 @@ function Header({ onSync, syncState, syncedAt }: { onSync: () => void; syncState
           <p className="text-xs leading-5 text-slate-400">
             {syncState === "synced" && syncedAt ? `Synced ${new Date(syncedAt).toLocaleTimeString()}` : null}
             {syncState === "failed" ? "Sync failed. Showing cached seed data." : null}
-            {syncState === "idle" ? "Seeded from the current 43-place Ho Chi Minh City recents set." : null}
+            {syncState === "idle" ? `Seeded from the current ${placeCount} visible Ho Chi Minh City places in the seed.` : null}
           </p>
         </div>
       </div>
@@ -395,7 +395,7 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1540px] flex-col gap-5 px-4 py-4 md:px-6 md:py-6">
-      <Header onSync={syncPlaces} syncState={syncState} syncedAt={syncedAt} />
+      <Header onSync={syncPlaces} placeCount={places.length} syncState={syncState} syncedAt={syncedAt} />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={MapPin} label="Visible HCMC places" value={String(filteredPlaces.length)} hint={`${places.length} total places in the current seed`} color="#16d9ff" />
