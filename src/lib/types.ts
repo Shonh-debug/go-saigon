@@ -6,6 +6,7 @@ export type PlaceCategory =
   | "Campus & Education"
   | "Sports & Fitness"
   | "Recreation"
+  | "Services"
   | "Navigation";
 
 export type DistrictArea =

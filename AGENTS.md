@@ -105,6 +105,12 @@ This looked less like pure tourism browsing and more like evaluating places the 
 - Added new persistent dashboard records for: Crescent Mall; Aeon Shopping Mall - Tan Phu; Phở Khoái; Công Viên Cây Xanh Tân Phong; Công viên HimLam; Trường Đại Học Cảnh Sát; Toà D Đại học Tôn Đức Thắng; Canadian International School; Havana Pickleball; Ton Duc Thang University Gymnasium; Dai Hoc Canh Sat Nhan Dan Football Field; Đại Học Cảnh Sát Nhân Dân; Pho Le; Panda Grill Zone; Whose Studio.
 - Treated already-recorded or previously-noted alternates as duplicates, including Đại học RMIT Việt Nam - Cơ sở Nam Sài Gòn, VFIS School, Sân bóng đá Hiếu Hoàng Long, The Locker Room, Ký túc xá Đại học Tôn Đức Thắng, 72 Đường Số 20, The new Playground Đồng Khởi, and Sân Bóng Đá Đại Long 2.
 
+### May 14, 2026 Automation Refresh
+
+- The live Google Maps Recents Ho Chi Minh City bucket showed 46 places in the user's signed-in Chrome Maps tab.
+- Added new persistent dashboard records for: Công trường Quách Thị Trang; BỆNH VIỆN MẮT TPHCM - Cổng số 2; Nhà thuốc Bệnh viện Mắt; La Vela Saigon Hotel; PASTA CLUB Not so Italian; KTV 700 Trần Hưng Đạo Phường 2 Quận 5; 호치민 가라오케 원투 KTV KARAOKE 더원; Bam; Pizza 4P's Cobi Tower; Quán Ăn Phú Ký; Cơm Tấm Dì Út; Cơm tấm Nguyễn Văn Cừ; Phở Phú Vương | Phở Ngon Quận 5; TBG Arena - Artificial Football Field 5 & 7 people; Le Football City; D7 Sports Park; SSA Sports Center.
+- Added a Services dashboard category for the hospital, pharmacy, and hotel recents, and widened the dashboard map bounds to cover the broader Ho Chi Minh City spread now visible in recents.
+
 ## Implementation Notes For Future Agents
 
 - Prefer reading the user's live Google Maps Recents panel through Chrome when account-specific recents are needed.

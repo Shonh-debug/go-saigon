@@ -7,6 +7,7 @@ export const categoryColors: Record<Place["category"], string> = {
   "Campus & Education": "#82f52c",
   "Sports & Fitness": "#ffb020",
   Recreation: "#9b7cff",
+  Services: "#34d399",
   Navigation: "#8ea5ff"
 };
 

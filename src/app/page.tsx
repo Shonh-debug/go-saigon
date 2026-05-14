@@ -44,6 +44,7 @@ const categories: Array<"All" | PlaceCategory> = [
   "Campus & Education",
   "Sports & Fitness",
   "Recreation",
+  "Services",
   "Navigation"
 ];
 
@@ -218,9 +219,9 @@ function Filters({
 function CityClusterMap({ places }: { places: Place[] }) {
   const plotted = places.filter((place) => typeof place.lat === "number" && typeof place.lng === "number");
   const minLat = 10.72;
-  const maxLat = 10.785;
-  const minLng = 106.685;
-  const maxLng = 106.715;
+  const maxLat = 10.815;
+  const minLng = 106.66;
+  const maxLng = 106.81;
 
   return (
     <section className="glass relative min-h-[390px] overflow-hidden rounded-2xl p-5">
