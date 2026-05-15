@@ -111,6 +111,13 @@ This looked less like pure tourism browsing and more like evaluating places the 
 - Added new persistent dashboard records for: Công trường Quách Thị Trang; BỆNH VIỆN MẮT TPHCM - Cổng số 2; Nhà thuốc Bệnh viện Mắt; La Vela Saigon Hotel; PASTA CLUB Not so Italian; KTV 700 Trần Hưng Đạo Phường 2 Quận 5; 호치민 가라오케 원투 KTV KARAOKE 더원; Bam; Pizza 4P's Cobi Tower; Quán Ăn Phú Ký; Cơm Tấm Dì Út; Cơm tấm Nguyễn Văn Cừ; Phở Phú Vương | Phở Ngon Quận 5; TBG Arena - Artificial Football Field 5 & 7 people; Le Football City; D7 Sports Park; SSA Sports Center.
 - Added a Services dashboard category for the hospital, pharmacy, and hotel recents, and widened the dashboard map bounds to cover the broader Ho Chi Minh City spread now visible in recents.
 
+### May 15, 2026 Automation Refresh
+
+- The live Google Maps Recents Ho Chi Minh City bucket showed 47 places in the user's signed-in Chrome Maps tab.
+- Added new persistent dashboard records for: Izakaya Unatoto Nguyễn Thị Thập; IZAKAYA TEN (TOKYO DRINKING STYLE); Lẩu bò tươi Triều Châu Pin Niu Xian; Mỳ Hoành Thánh PHONG NHÃ; KOHAKU RAMEN & UDON - CRESCENT MALL; Bui Vien Walking Street; Phở Việt Nam (Nguyễn Thị Thập area); Shinsho Ramen Midtown; Wok of love Quận 7; Kohaku Sashimi & Yakiniku Lotte Mart; KOHAKU RAMEN & UDON - NGUYỄN TRI PHƯƠNG; Phở Việt Nam (District 1); PricewaterhouseCoopers (Vietnam); Big Night Out - Bar & Lounge; Khách Sạn Lan Anh; Eddie's (District 7) New York Deli & Diner; CULCAT 42 Tôn Thất Thiệp; UNUNMEOMEO (Tôn Thất Thiệp); UNUNMEOMEO (Lê Thánh Tôn); Saigon South International School; House of STEEL - Fitness Members Club Quận 7; Kavin Sports; CabaSports - Shop cầu lông chuyên nghiệp.
+- Treated existing or alternate dashboard records as duplicates, including Neighborhood Saigon, The New Playground, Whose Studio, 72 Đường Số 20, Bam, The Locker Room, Ben Thanh Market, AEON MALL Tân Phú Celadon, the May 14 food/services/sports recents, KTV 700 Trần Hưng Đạo, and 호치민 가라오케 원투 KTV KARAOKE 더원.
+- Widened the dashboard map westward to keep the CabaSports point visible in the plotted cluster view.
+
 ## Implementation Notes For Future Agents
 
 - Prefer reading the user's live Google Maps Recents panel through Chrome when account-specific recents are needed.
