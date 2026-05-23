@@ -118,6 +118,12 @@ This looked less like pure tourism browsing and more like evaluating places the 
 - Treated existing or alternate dashboard records as duplicates, including Neighborhood Saigon, The New Playground, Whose Studio, 72 Đường Số 20, Bam, The Locker Room, Ben Thanh Market, AEON MALL Tân Phú Celadon, the May 14 food/services/sports recents, KTV 700 Trần Hưng Đạo, and 호치민 가라오케 원투 KTV KARAOKE 더원.
 - Widened the dashboard map westward to keep the CabaSports point visible in the plotted cluster view.
 
+### May 23, 2026 Automation Refresh
+
+- Direct Chrome UI/DOM access to the live Recents panel was unavailable in this run, so the refresh used the logged-in Chrome Google Maps history as the best available fallback and only accepted clear Ho Chi Minh City place-detail candidates.
+- Added new persistent dashboard records for: UNIQLO - Saigon Centre; UNIQLO - SC VivoCity; ATM Vietcombank - Lotte Mart Nguyen Huu Tho; Vietcombank - Hong Linh Plaza.
+- Treated existing or contextual dashboard records as duplicates or non-candidates, including 72 Đường Số 20, PricewaterhouseCoopers (Vietnam), Hồng Lĩnh Plaza address context, Lotte Mart address context, and non-Ho Chi Minh City viewport carryovers such as Vancouver and Calgary.
+
 ## Implementation Notes For Future Agents
 
 - Prefer reading the user's live Google Maps Recents panel through Chrome when account-specific recents are needed.
