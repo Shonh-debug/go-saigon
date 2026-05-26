@@ -1,4 +1,4 @@
-# Maps Pulse Saigon Tourist Destination Explorer
+# Go Saigon Tourist Destination Explorer
 
 ## Project Goal
 

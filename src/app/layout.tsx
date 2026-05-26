@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Maps Pulse Saigon | Ho Chi Minh City Destination Explorer",
+  title: "Go Saigon | Ho Chi Minh City Destination Explorer",
   description: "Explore highly reviewed food, nightlife, landmarks, shopping, fitness, education, and visitor services across Ho Chi Minh City."
 };
 

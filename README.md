@@ -1,4 +1,4 @@
-# Maps Pulse Saigon
+# Go Saigon
 
 A full-stack destination explorer for tourists visiting Ho Chi Minh City. Visitors choose a familiar district and an experience category, then browse highly reviewed Google Maps destinations on an interactive city map with live popularity analytics.
 

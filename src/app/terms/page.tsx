@@ -4,7 +4,7 @@ export default function TermsPage() {
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-5 py-10">
       <Link href="/" className="text-sm font-semibold text-cyanPulse">
-        Maps Pulse Saigon
+        Go Saigon
       </Link>
       <article className="glass mt-6 rounded-lg p-6 md:p-9">
         <h1 className="text-3xl font-bold text-white">Terms of Use</h1>
@@ -13,7 +13,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-white">Destination discovery</h2>
             <p className="mt-2">
-              Maps Pulse Saigon provides visitor-oriented discovery results for familiar Ho Chi Minh City district
+              Go Saigon provides visitor-oriented discovery results for familiar Ho Chi Minh City district
               areas. Rankings are based on the live Google Places candidates retrieved for a search, ordered by
               review count and then rating; they are not a guarantee of an exhaustive citywide ranking.
             </p>

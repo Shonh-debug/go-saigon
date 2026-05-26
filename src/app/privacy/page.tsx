@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-5 py-10">
       <Link href="/" className="text-sm font-semibold text-cyanPulse">
-        Maps Pulse Saigon
+        Go Saigon
       </Link>
       <article className="glass mt-6 rounded-lg p-6 md:p-9">
         <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-white">What this site processes</h2>
             <p className="mt-2">
-              Maps Pulse Saigon retrieves public destination information from Google Maps Platform when you select a
+              Go Saigon retrieves public destination information from Google Maps Platform when you select a
               visitor area and category. Results can include place names, locations, ratings, review counts, links,
               and photos for immediate display.
             </p>
