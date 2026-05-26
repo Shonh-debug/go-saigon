@@ -1,128 +1,96 @@
 # Maps Pulse Saigon
 
-Maps Pulse Saigon is a neon city-atlas dashboard for analyzing recent Google Maps place activity in Ho Chi Minh City. It turns a seed set of searched or viewed places into an interactive analytics surface with category breakdowns, popularity signals, city clusters, and direct Google Maps links.
+A full-stack destination explorer for tourists visiting Ho Chi Minh City. Visitors choose a familiar district and an experience category, then browse highly reviewed Google Maps destinations on an interactive city map with live popularity analytics.
 
-The current version is built as a polished local demo for a future Vercel deployment. It uses a growing dataset of recent locations in Ho Chi Minh City as the baseline and can manually enrich those places with Google Places API data through a server-side sync endpoint.
+## Experience
 
-## What It Does
+- Opens with **District 1 + Landmarks** as the featured discovery query.
+- Supports 15 familiar visitor areas and seven categories: Food, Nightlife & Recreation, Shopping, Landmarks, Campus & Education, Sport & Fitness, and Services.
+- Returns up to 20 live Google Places results ordered by review count, rating, and then name.
+- Shows ranked destination cards, Google Maps links, photos and attributions, map pins, review-volume charts, rating analysis, and experience-type breakdowns.
+- Uses a licensed 2020 district overlay for tourist-friendly area selection while clearly distinguishing it from current administrative boundaries.
 
-- Shows recently searched Ho Chi Minh City places across food, nightlife, shopping, education, sports, recreation, and navigation targets.
-- Summarizes place popularity using Google Maps ratings and review counts.
-- Groups places by dashboard-friendly categories and district areas.
-- Visualizes category mix, area split, rating vs review volume, and city clusters.
-- Provides filters for category, area, popularity tier, rating threshold, and text search.
-- Supports a manual "Sync places" flow that enriches seed records through the Places API without exposing the API key to browser code.
-
-## Dashboard Preview
+## Application Flow
 
 ```mermaid
 flowchart LR
-  A["Header + Sync Control"] --> B["KPI Strip"]
-  B --> C["Signal Filters"]
-  C --> D["Insight Cards"]
-  D --> E["Category Pulse Chart"]
-  D --> F["Area Split Chart"]
-  D --> G["Rating vs Popularity Scatter"]
-  D --> H["City Clusters Map"]
-  H --> I["Popularity Leaderboard"]
-  G --> J["Place Intelligence Table"]
-  I --> J
+  A["Choose visitor area + category"] --> B["Live Places Nearby Search"]
+  B --> C["Filter inside district overlay"]
+  C --> D["Deduplicate + rank by reviews then rating"]
+  D --> E["Interactive Google Map + ranked cards"]
+  D --> F["KPIs + analytics charts"]
 ```
 
-```mermaid
-flowchart TD
-  A["User clicks Sync places"] --> B["POST /api/places/sync"]
-  B --> C["Server reads GOOGLE_MAPS_API_KEY"]
-  C --> D["Places API Text Search"]
-  D --> E["Normalize place records"]
-  E --> F["Return places + syncedAt"]
-  F --> G["Dashboard updates charts, KPIs, table, and Maps links"]
+## Stack
+
+- Next.js App Router, React, TypeScript, and Tailwind CSS
+- Recharts analytics and lucide-react controls
+- `@vis.gl/react-google-maps` for the real Google map and destination markers
+- Turf for district polygon inclusion checks
+- Google Places API (New) for live destination details and photos
+- Neon Postgres and Drizzle ORM for place-ID-only associations and anonymous discovery metrics
+- Upstash Redis rate limiting for public API protection
+
+## API
+
+### `GET /api/discovery/options`
+
+Returns visitor-area and category selector data, including the default District 1 / Landmarks selection.
+
+### `POST /api/discovery/search`
+
+Accepts:
+
+```json
+{ "areaId": "district-1", "categoryId": "landmarks" }
 ```
 
-## How It Was Built
+Returns up to 20 current Google Places destinations, strictly ranked by `userRatingCount` descending, then `rating` descending, then name. Responses are `no-store`; Google place display content is not persisted as a catalog.
 
-- **Framework:** Next.js App Router with React and TypeScript.
-- **Styling:** Tailwind CSS with a custom neon city-atlas visual system.
-- **Charts:** Recharts for pie, bar, and scatter visualizations.
-- **Icons:** lucide-react for dashboard controls and status indicators.
-- **Data model:** Normalized `Place` records with name, category, types, address, district area, rating, review count, coordinates, status, Maps URI, last seen date, and source.
-- **Google integration:** Server-side Google Places API Text Search requests using `process.env.GOOGLE_MAPS_API_KEY`.
-- **Deployment target:** Vercel-ready Next.js app. API keys should be stored as local or Vercel environment variables only.
+### `GET /api/discovery/photo`
 
-## API Features
+Proxies one immediately displayed Google Places photo through a short-lived signed reference so the server Places key is not exposed in browser URLs. The UI displays the returned photo attribution.
 
-### `GET /api/places`
+## Google Data And Storage
 
-Returns the current normalized seed dataset.
+The database stores only application-owned configuration, anonymous request metrics, and Google place IDs discovered for an area/category pair. Live place names, ratings, review counts, addresses, links, photos, and raw Google responses are retrieved when a visitor searches and are not stored.
 
-```ts
-{
-  places: Place[]
-}
-```
-
-Use this endpoint when the UI needs the baseline Ho Chi Minh City place list without running a live enrichment request.
-
-### `POST /api/places/sync`
-
-Enriches the configured seed places through Google Places API Text Search and returns normalized records plus a sync timestamp.
-
-```ts
-{
-  places: Place[],
-  syncedAt: string
-}
-```
-
-The sync route requests only the fields needed by the dashboard:
-
-- `displayName`
-- `formattedAddress`
-- `rating`
-- `userRatingCount`
-- `types`
-- `location`
-- `businessStatus`
-- `googleMapsUri`
-
-The API key is used only on the server and should never be committed, logged, embedded in frontend code, or exposed in screenshots.
+Place content and photos are provided by Google Maps Platform. Visitor-area boundaries come from **geoBoundaries VNM ADM2 (2020), OCHA ROAP / Government of Viet Nam**, licensed under **CC BY 3.0 IGO**.
 
 ## Local Development
 
-Create `.env.local`:
+Create `.env.local` from `.env.example` and configure:
 
 ```env
 GOOGLE_MAPS_API_KEY=
+NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY=
+NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=
+DATABASE_URL=
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
 ```
 
-Install dependencies and start the app:
+- Restrict `GOOGLE_MAPS_API_KEY` to Places API (New) and server use.
+- Restrict `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` by HTTP referrer and Maps JavaScript API.
+- Configure `DATABASE_URL` to enable durable place-ID associations.
+- Configure Upstash values to enable public endpoint rate limiting.
 
 ```bash
 npm install
+npm run db:migrate
 npm run dev
 ```
 
-Open:
+Open `http://127.0.0.1:3000`.
 
-```text
-http://127.0.0.1:3000
-```
-
-## Useful Commands
+## Verification
 
 ```bash
-npm run dev
-npm run build
+npm run test
 npm run lint
+npm run build
 ```
 
-## Project Direction
+## Policy Pages
 
-The long-term goal is an automated Google Maps analytics pipeline:
-
-1. Read the user's Ho Chi Minh City Google Maps recents from a logged-in Maps context.
-2. Normalize and deduplicate the place list.
-3. Enrich each place with Google Places API details.
-4. Store the records in a durable cache or database.
-5. Deploy the dashboard to Vercel.
-6. Add refresh automation so new searches update the dashboard over time.
+The app includes public [Privacy](/privacy) and [Terms](/terms) pages describing Google content handling, attribution, ranking limitations, and boundary data provenance.

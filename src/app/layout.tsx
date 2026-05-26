@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Maps Pulse Saigon",
-  description: "A neon atlas dashboard for Ho Chi Minh City Google Maps recents."
+  title: "Maps Pulse Saigon | Ho Chi Minh City Destination Explorer",
+  description: "Explore highly reviewed food, nightlife, landmarks, shopping, fitness, education, and visitor services across Ho Chi Minh City."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
