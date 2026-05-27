@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import brandLogo from "./icon.png";
 import {
   ArrowUpRight,
   BarChart3,
@@ -204,7 +205,7 @@ export default function Home() {
         <div className="atlas-grid absolute inset-0 opacity-35" />
         <div className="relative flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
           <div className="flex items-center gap-4">
-            <Image src="/icon.png" width={60} height={60} alt="Go Saigon" className="h-14 w-14 rounded-lg" />
+            <Image src={brandLogo} width={60} height={60} alt="Go Saigon" className="h-14 w-14 rounded-lg" />
             <div>
               <div className="flex items-center gap-2 text-xs uppercase text-cyanPulse">
                 <Sparkles className="h-3.5 w-3.5" />
