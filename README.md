@@ -1,96 +1,182 @@
-# Go Saigon
+# 📍 Go Saigon — Ho Chi Minh City Destination Explorer
 
-A full-stack destination explorer for tourists visiting Ho Chi Minh City. Visitors choose a familiar district and an experience category, then browse highly reviewed Google Maps destinations on an interactive city map with live popularity analytics.
+A live destination discovery web application that helps tourists find highly reviewed places across Ho Chi Minh City's familiar visitor districts, explore them on an interactive map, and compare popularity insights at a glance.
 
-## Experience
+**🌐 Local Preview:** [http://localhost:3000](http://localhost:3000)
 
-- Opens with **District 1 + Landmarks** as the featured discovery query.
-- Supports 15 familiar visitor areas and seven categories: Food, Nightlife & Recreation, Shopping, Landmarks, Campus & Education, Sport & Fitness, and Services.
-- Returns up to 20 live Google Places results ordered by review count, rating, and then name.
-- Shows ranked destination cards, Google Maps links, photos and attributions, map pins, review-volume charts, rating analysis, and experience-type breakdowns.
-- Uses a licensed 2020 district overlay for tourist-friendly area selection while clearly distinguishing it from current administrative boundaries.
+---
 
-## Application Flow
+## 📋 Overview
 
-```mermaid
-flowchart LR
-  A["Choose visitor area + category"] --> B["Live Places Nearby Search"]
-  B --> C["Filter inside district overlay"]
-  C --> D["Deduplicate + rank by reviews then rating"]
-  D --> E["Interactive Google Map + ranked cards"]
-  D --> F["KPIs + analytics charts"]
+Go Saigon is a full-stack web application that integrates the **Google Places API (New)** and **Google Maps JavaScript API** to retrieve and display popular tourist destinations in Ho Chi Minh City. Users can select a familiar visitor district and experience category, view live ranked destinations on a map, open exact Google Maps listings, and compare ratings, review volume, and category insights through an analytics dashboard.
+
+### Key Features
+
+- 🔍 **District & Category Discovery** — Choose from 15 familiar visitor areas and categories including Food, Landmarks, Shopping, Nightlife & Recreation, Sport & Fitness, Education, and Services
+- 📊 **Live Insights Dashboard** — KPI cards and visualizations for destination count, average rating, review volume, popularity rankings, and experience mix
+- 🗺️ **Interactive Google Map** — View numbered destination pins over a visitor-friendly district overlay and open exact listings in Google Maps
+- ⭐ **Popularity Ranking** — Results are ordered by Google review count first, then rating, then destination name for deterministic ties
+- 📷 **Destination Photos** — Live Google Places photos shown alongside attribution on ranked destination cards
+- 🏙️ **Visitor-Area Boundaries** — Licensed 2020 district overlay provides familiar trip-planning geography for tourists
+- 🔐 **Policy-Aware Data Handling** — Google place display content is requested live, while durable storage is limited to place IDs and application-owned metadata
+- 📱 **Responsive Design** — Fully responsive across desktop and mobile
+
+---
+
+## 🏗️ Tech Stack
+
+### Frontend
+
+| Technology | Purpose |
+|---|---|
+| **Next.js 15 (App Router)** | React framework — routing, client experience, server routes, and Vercel deployment |
+| **TypeScript** | Type-safe development across discovery data, API handlers, and UI components |
+| **Tailwind CSS** | Utility-first CSS framework for the neon atlas interface and responsive layout |
+| **Recharts** | Analytics charts for popularity, ratings, and experience mix |
+| **lucide-react** | Interface icons for discovery controls, status, and analytics |
+| **`@vis.gl/react-google-maps`** | Google Map rendering, destination markers, and interactive map behavior |
+
+### Backend
+
+| Technology | Purpose |
+|---|---|
+| **Next.js API Routes** | Serverless endpoints (`/api/discovery/*`) that securely handle destination requests |
+| **Google Places API (New)** | Live place search, rating/review metrics, Google Maps links, and photo metadata |
+| **Turf** | Filters result coordinates inside the selected visitor-area boundary polygon |
+| **Neon Postgres + Drizzle ORM** | Optional place-ID-only persistence and anonymous request metrics |
+| **Upstash Redis** | Optional public API rate limiting for Google API cost and abuse protection |
+
+### Infrastructure & Hosting
+
+| Technology | Purpose |
+|---|---|
+| **Vercel** | Production hosting target — deploys the Next.js app and API routes |
+| **GitHub** | Source control and deployment trigger (`Shonh-debug/maps-pulse-saigon`) |
+| **Vercel Environment Variables** | Stores server Places credentials, browser map configuration, and optional database/rate-limit settings |
+| **geoBoundaries** | Licensed visitor-area polygon dataset (VNM ADM2 2020, CC BY 3.0 IGO) |
+
+---
+
+## 🗂️ Project Structure
+
+```text
+src/
+├── app/
+│   ├── api/
+│   │   └── discovery/
+│   │       ├── options/route.ts    # Public visitor-area and category options
+│   │       ├── search/route.ts     # Live ranked Google Places discovery
+│   │       └── photo/route.ts      # Signed no-store Places photo proxy
+│   ├── privacy/page.tsx            # Privacy and Google data handling disclosure
+│   ├── terms/page.tsx              # Ranking, boundary, and Google terms disclosure
+│   ├── layout.tsx                  # Root layout and product metadata
+│   ├── page.tsx                    # Tourist discovery dashboard homepage
+│   └── globals.css                 # Global styles and neon atlas design system
+├── components/
+│   └── DestinationMap.tsx          # Google Map, district overlay, and ranked pins
+└── lib/
+    ├── discovery/
+    │   ├── config.ts               # Areas, categories, polygon checks, and ranking
+    │   ├── database.ts             # Optional ID-only persistence adapter
+    │   ├── rateLimit.ts            # Optional Upstash endpoint protection
+    │   ├── schema.ts               # Drizzle Postgres schema
+    │   └── types.ts                # Discovery API types
+    └── googlePlaces.ts             # Places search, live details, and photo handling
 ```
 
-## Stack
+---
 
-- Next.js App Router, React, TypeScript, and Tailwind CSS
-- Recharts analytics and lucide-react controls
-- `@vis.gl/react-google-maps` for the real Google map and destination markers
-- Turf for district polygon inclusion checks
-- Google Places API (New) for live destination details and photos
-- Neon Postgres and Drizzle ORM for place-ID-only associations and anonymous discovery metrics
-- Upstash Redis rate limiting for public API protection
+## 🔌 API Integration
 
-## API
+The app uses the **Google Places API (New)** Nearby Search endpoint:
 
-### `GET /api/discovery/options`
-
-Returns visitor-area and category selector data, including the default District 1 / Landmarks selection.
-
-### `POST /api/discovery/search`
-
-Accepts:
-
-```json
-{ "areaId": "district-1", "categoryId": "landmarks" }
+```text
+https://places.googleapis.com/v1/places:searchNearby
 ```
 
-Returns up to 20 current Google Places destinations, strictly ranked by `userRatingCount` descending, then `rating` descending, then name. Responses are `no-store`; Google place display content is not persisted as a catalog.
+The Next.js API route (`/api/discovery/search`) acts as a **secure server layer** between the browser and Google Places — the server-side `GOOGLE_MAPS_API_KEY` is never sent to the client.
 
-### `GET /api/discovery/photo`
+**Discovery and ranking flow:** The API route receives a visitor area and category, searches for relevant Google place types, filters returned candidates inside the selected boundary, removes duplicates, excludes permanently closed places, and returns up to 20 destinations ranked by `userRatingCount` descending, then `rating` descending, then name.
 
-Proxies one immediately displayed Google Places photo through a short-lived signed reference so the server Places key is not exposed in browser URLs. The UI displays the returned photo attribution.
+**Public application endpoints:**
 
-## Google Data And Storage
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/discovery/options` | Returns the 15 visitor areas, seven categories, and the default District 1 / Landmarks selection |
+| `POST /api/discovery/search` | Runs a live ranked search and returns current destination information and photo references |
+| `GET /api/discovery/photo` | Securely proxies an immediately displayed Google Places photo through a signed short-lived URL |
 
-The database stores only application-owned configuration, anonymous request metrics, and Google place IDs discovered for an area/category pair. Live place names, ratings, review counts, addresses, links, photos, and raw Google responses are retrieved when a visitor searches and are not stored.
+**Data returned per destination:**
+- Google place ID, destination name, formatted address, and place types
+- Current Google rating and user review count
+- Latitude and longitude for numbered map pins
+- Business status and direct Google Maps listing URL
+- Optional displayed photo and required photo author attribution
 
-Place content and photos are provided by Google Maps Platform. Visitor-area boundaries come from **geoBoundaries VNM ADM2 (2020), OCHA ROAP / Government of Viet Nam**, licensed under **CC BY 3.0 IGO**.
+---
 
-## Local Development
+## 🚀 Running Locally
 
-Create `.env.local` from `.env.example` and configure:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Shonh-debug/maps-pulse-saigon.git
+   cd maps-pulse-saigon
+   ```
 
-```env
-GOOGLE_MAPS_API_KEY=
-NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY=
-NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=
-DATABASE_URL=
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-- Restrict `GOOGLE_MAPS_API_KEY` to Places API (New) and server use.
-- Restrict `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` by HTTP referrer and Maps JavaScript API.
-- Configure `DATABASE_URL` to enable durable place-ID associations.
-- Configure Upstash values to enable public endpoint rate limiting.
+3. **Set up your environment variables**
 
-```bash
-npm install
-npm run db:migrate
-npm run dev
-```
+   Copy the example file and add your Google Maps configuration:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Then edit `.env.local`:
+   ```env
+   GOOGLE_MAPS_API_KEY=your_server_places_key
+   NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY=your_browser_maps_key
+   NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=your_map_id
+   DATABASE_URL=
+   UPSTASH_REDIS_REST_URL=
+   UPSTASH_REDIS_REST_TOKEN=
+   ```
+   > Create keys in the [Google Maps Platform Console](https://console.cloud.google.com/google/maps-apis/credentials). Restrict the server key to Places API (New), and restrict the browser key by HTTP referrer and Maps JavaScript API.
 
-Open `http://127.0.0.1:3000`.
+4. **Run database migrations (optional persistence)**
+   ```bash
+   npm run db:migrate
+   ```
 
-## Verification
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```bash
-npm run test
-npm run lint
-npm run build
-```
+---
 
-## Policy Pages
+## ☁️ Deployment (Vercel)
 
-The app includes public [Privacy](/privacy) and [Terms](/terms) pages describing Google content handling, attribution, ranking limitations, and boundary data provenance.
+The app is designed for deployment through **Vercel** linked to the GitHub repository. Every push to the `main` branch can trigger an automatic redeploy after the repository is connected in Vercel.
+
+**Environment variables required on Vercel:**
+
+| Variable | Description |
+|---|---|
+| `GOOGLE_MAPS_API_KEY` | Server-only Google Places API (New) key used by discovery and photo routes |
+| `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` | HTTP-referrer-restricted browser key used to render the Google Map |
+| `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | Google Maps map ID used by the interactive destination map |
+| `DATABASE_URL` | Neon Postgres connection string for optional place-ID-only persistence |
+| `UPSTASH_REDIS_REST_URL` | Optional Upstash Redis REST endpoint for rate limiting |
+| `UPSTASH_REDIS_REST_TOKEN` | Optional Upstash token for rate limiting |
+
+The discovery and photo routes use `Cache-Control: no-store` so Google place display content is retrieved live rather than persisted as a cached destination catalog.
+
+---
+
+## 📄 License
+
+This project is for personal/educational use. Place data, photos, map imagery, and destination links are provided by [Google Maps Platform](https://developers.google.com/maps). Visitor-area boundaries are based on [geoBoundaries VNM ADM2 (2020)](https://www.geoboundaries.org/) data produced by OCHA ROAP / Government of Viet Nam and licensed under **CC BY 3.0 IGO**.
