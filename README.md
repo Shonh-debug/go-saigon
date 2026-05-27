@@ -2,7 +2,7 @@
 
 A live destination discovery web application that helps tourists find highly reviewed places across Ho Chi Minh City's familiar visitor districts, explore them on an interactive map, and compare popularity insights at a glance.
 
-**🌐 Local Preview:** [go-saigon.verce.app](https://go-saigon.vercel.app/)
+**🌐 Live Site:** [go-saigon.vercel.app](https://go-saigon.vercel.app/)
 
 ---
 
@@ -42,6 +42,7 @@ Go Saigon is a full-stack web application that integrates the **Google Places AP
 |---|---|
 | **Next.js API Routes** | Serverless endpoints (`/api/discovery/*`) that securely handle destination requests |
 | **Google Places API (New)** | Live place search, rating/review metrics, Google Maps links, and photo metadata |
+| **Google Maps JavaScript API** | 	Browser-side visual map: basemap, markers, interactions, and map rendering |
 | **Turf** | Filters result coordinates inside the selected visitor-area boundary polygon |
 | **Neon Postgres + Drizzle ORM** | Optional place-ID-only persistence and anonymous request metrics |
 | **Upstash Redis** | Optional public API rate limiting for Google API cost and abuse protection |
@@ -169,9 +170,6 @@ The app is designed for deployment through **Vercel** linked to the GitHub repos
 | `GOOGLE_MAPS_API_KEY` | Server-only Google Places API (New) key used by discovery and photo routes |
 | `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` | HTTP-referrer-restricted browser key used to render the Google Map |
 | `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | Google Maps map ID used by the interactive destination map |
-| `DATABASE_URL` | Neon Postgres connection string for optional place-ID-only persistence |
-| `UPSTASH_REDIS_REST_URL` | Optional Upstash Redis REST endpoint for rate limiting |
-| `UPSTASH_REDIS_REST_TOKEN` | Optional Upstash token for rate limiting |
 
 The discovery and photo routes use `Cache-Control: no-store` so Google place display content is retrieved live rather than persisted as a cached destination catalog.
 
