@@ -2,7 +2,7 @@
 
 A live destination discovery web application that helps tourists find highly reviewed places across Ho Chi Minh City's familiar visitor districts, explore them on an interactive map, and compare popularity insights at a glance.
 
-**🌐 Local Preview:** [http://localhost:3000](http://localhost:3000)
+**🌐 Local Preview:** [go-saigon.verce.app](https://go-saigon.vercel.app/)
 
 ---
 
