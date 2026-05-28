@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import {
   dedupeDestinations,
   getCategory,
+  getSearchCircles,
   getVisitorArea,
   hasLimitedResults,
   isInsideVisitorArea,
@@ -17,6 +18,11 @@ import type {
   DiscoverySearchResponse,
   VisitorAreaId
 } from "./discovery/types";
+
+type SearchCircle = {
+  center: { lat: number; lng: number };
+  radius: number;
+};
 
 type GooglePhoto = {
   name: string;
@@ -98,20 +104,18 @@ async function googleRequest(url: string, init?: RequestInit) {
   });
 }
 
-async function nearbySearch(placeType: string, areaId: VisitorAreaId) {
-  const area = getVisitorArea(areaId);
-  if (!area) return [];
+async function nearbySearch(placeTypes: string[], circle: SearchCircle) {
   const response = await googleRequest("https://places.googleapis.com/v1/places:searchNearby", {
     method: "POST",
     headers: { "X-Goog-FieldMask": SEARCH_FIELD_MASK },
     body: JSON.stringify({
-      includedTypes: [placeType],
+      includedTypes: placeTypes,
       maxResultCount: 20,
       rankPreference: "POPULARITY",
       locationRestriction: {
         circle: {
-          center: { latitude: area.center.lat, longitude: area.center.lng },
-          radius: area.radius
+          center: { latitude: circle.center.lat, longitude: circle.center.lng },
+          radius: circle.radius
         }
       },
       languageCode: "en",
@@ -121,6 +125,14 @@ async function nearbySearch(placeType: string, areaId: VisitorAreaId) {
   if (!response.ok) throw new Error(`Places Nearby Search returned ${response.status}.`);
   const payload = (await response.json()) as { places?: GooglePlace[] };
   return (payload.places ?? []).map(normalizePlace).filter((place): place is Destination => Boolean(place));
+}
+
+function searchTasks(area: NonNullable<ReturnType<typeof getVisitorArea>>, category: NonNullable<ReturnType<typeof getCategory>>) {
+  const searchCircles = getSearchCircles(area, category.id);
+  if (area.id === "district-7" && category.id === "food") {
+    return searchCircles.map((circle) => nearbySearch(category.placeTypes, circle));
+  }
+  return category.placeTypes.flatMap((placeType) => searchCircles.map((circle) => nearbySearch([placeType], circle)));
 }
 
 async function getPlaceDetails(placeId: string) {
@@ -188,7 +200,7 @@ export async function discoverDestinations(areaId: VisitorAreaId, categoryId: Ca
   if (!area || !category) throw new Error("Unknown visitor area or destination category.");
   serverApiKey();
 
-  const searches = await Promise.allSettled(category.placeTypes.map((placeType) => nearbySearch(placeType, area.id)));
+  const searches = await Promise.allSettled(searchTasks(area, category));
   const discovered = searches.flatMap((result) => (result.status === "fulfilled" ? result.value : []));
   if (!discovered.length && searches.every((result) => result.status === "rejected")) {
     throw new Error("Google Places search is unavailable right now.");

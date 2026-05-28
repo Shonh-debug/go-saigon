@@ -13,8 +13,16 @@ import type {
 
 type VisitorFeatureProperties = { id: VisitorAreaId; label: string };
 type VisitorFeature = Feature<Polygon | MultiPolygon, VisitorFeatureProperties>;
+type SearchCircle = { center: { lat: number; lng: number }; radius: number };
 
 const boundaries = visitorAreaGeoJson as FeatureCollection<Polygon | MultiPolygon, VisitorFeatureProperties>;
+const districtSevenFoodCircles: SearchCircle[] = [
+  { center: { lat: 10.7292, lng: 106.7218 }, radius: 1_800 }, // Phu My Hung, Crescent Mall, Cobi Tower
+  { center: { lat: 10.7297, lng: 106.7037 }, radius: 1_700 }, // SC VivoCity and Tan Phong
+  { center: { lat: 10.7418, lng: 106.7097 }, radius: 1_700 }, // Tan Hung and Lotte Mart corridor
+  { center: { lat: 10.7404, lng: 106.7199 }, radius: 1_600 }, // Nguyen Thi Thap and Tan Quy dining strip
+  { center: { lat: 10.7217, lng: 106.7128 }, radius: 1_700 } // Nguyen Van Linh south and Him Lam edge
+];
 
 export const categories: DestinationCategory[] = [
   { id: "food", label: "Food", placeTypes: ["restaurant", "vietnamese_restaurant", "cafe", "coffee_shop", "bakery", "food_court"] },
@@ -88,6 +96,11 @@ export function getCategory(categoryId: string) {
 
 export function getVisitorArea(areaId: string) {
   return visitorAreas.find((area) => area.id === areaId);
+}
+
+export function getSearchCircles(area: VisitorArea, categoryId: CategoryId): SearchCircle[] {
+  if (area.id === "district-7" && categoryId === "food") return districtSevenFoodCircles;
+  return [{ center: area.center, radius: area.radius }];
 }
 
 export function isInsideVisitorArea(destination: Pick<Destination, "lat" | "lng">, areaId: VisitorAreaId) {

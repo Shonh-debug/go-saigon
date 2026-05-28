@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   categories,
   dedupeDestinations,
+  getSearchCircles,
+  getVisitorArea,
   hasLimitedResults,
   isInsideVisitorArea,
   isOperatingDestination,
@@ -57,6 +59,16 @@ describe("tourist discovery configuration", () => {
   it("filters points to the selected visitor-area polygon", () => {
     expect(isInsideVisitorArea(destination({ lat: 10.775, lng: 106.699 }), "district-1")).toBe(true);
     expect(isInsideVisitorArea(destination({ lat: 10.735, lng: 106.73 }), "district-1")).toBe(false);
+  });
+
+  it("expands only District 7 Food into multiple search circles", () => {
+    const districtSeven = getVisitorArea("district-7");
+    const districtOne = getVisitorArea("district-1");
+    expect(districtSeven).toBeDefined();
+    expect(districtOne).toBeDefined();
+    expect(getSearchCircles(districtSeven!, "food")).toHaveLength(5);
+    expect(getSearchCircles(districtSeven!, "landmarks")).toHaveLength(1);
+    expect(getSearchCircles(districtOne!, "food")).toHaveLength(1);
   });
 
   it("flags searches with fewer than fifteen qualifying results", () => {
