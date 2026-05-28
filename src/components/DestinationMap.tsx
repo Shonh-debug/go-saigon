@@ -6,6 +6,13 @@ import { MapPinned } from "lucide-react";
 import type { Destination, VisitorAreaId } from "@/lib/discovery/types";
 
 const fallbackCenter = { lat: 10.7769, lng: 106.7009 };
+const mapTheme = {
+  selectedFill: "#00e5d4",
+  quietFill: "#13201e",
+  selectedStroke: "#00e5d4",
+  quietStroke: "#4d5d62",
+  label: "#06070d"
+};
 
 function MapContents({ areaId, destinations }: { areaId: VisitorAreaId; destinations: Destination[] }) {
   const map = useMap();
@@ -21,9 +28,9 @@ function MapContents({ areaId, destinations }: { areaId: VisitorAreaId; destinat
         if (cancelled) return;
         features = map.data.addGeoJson(geojson);
         map.data.setStyle((feature) => ({
-          fillColor: feature.getProperty("id") === areaId ? "#16d9ff" : "#172641",
-          fillOpacity: feature.getProperty("id") === areaId ? 0.2 : 0.04,
-          strokeColor: feature.getProperty("id") === areaId ? "#16d9ff" : "#53627d",
+          fillColor: feature.getProperty("id") === areaId ? mapTheme.selectedFill : mapTheme.quietFill,
+          fillOpacity: feature.getProperty("id") === areaId ? 0.22 : 0.04,
+          strokeColor: feature.getProperty("id") === areaId ? mapTheme.selectedStroke : mapTheme.quietStroke,
           strokeOpacity: feature.getProperty("id") === areaId ? 0.9 : 0.25,
           strokeWeight: feature.getProperty("id") === areaId ? 2 : 1
         }));
@@ -46,9 +53,9 @@ function MapContents({ areaId, destinations }: { areaId: VisitorAreaId; destinat
   useEffect(() => {
     if (!map) return;
     map.data.setStyle((feature) => ({
-      fillColor: feature.getProperty("id") === areaId ? "#16d9ff" : "#172641",
-      fillOpacity: feature.getProperty("id") === areaId ? 0.2 : 0.04,
-      strokeColor: feature.getProperty("id") === areaId ? "#16d9ff" : "#53627d",
+      fillColor: feature.getProperty("id") === areaId ? mapTheme.selectedFill : mapTheme.quietFill,
+      fillOpacity: feature.getProperty("id") === areaId ? 0.22 : 0.04,
+      strokeColor: feature.getProperty("id") === areaId ? mapTheme.selectedStroke : mapTheme.quietStroke,
       strokeOpacity: feature.getProperty("id") === areaId ? 0.9 : 0.25,
       strokeWeight: feature.getProperty("id") === areaId ? 2 : 1
     }));
@@ -68,7 +75,7 @@ function MapContents({ areaId, destinations }: { areaId: VisitorAreaId; destinat
         <Marker
           key={destination.placeId}
           position={{ lat: destination.lat, lng: destination.lng }}
-          label={{ text: String(index + 1), color: "#071024", fontWeight: "700" }}
+          label={{ text: String(index + 1), color: mapTheme.label, fontWeight: "700" }}
           title={destination.name}
           onClick={() => window.open(destination.googleMapsUri, "_blank", "noopener,noreferrer")}
         />
@@ -83,7 +90,7 @@ export function DestinationMap({ areaId, destinations }: { areaId: VisitorAreaId
 
   if (!browserKey) {
     return (
-      <div className="flex h-full min-h-[450px] flex-col items-center justify-center gap-3 bg-[#0a1326] px-8 text-center">
+      <div className="flex h-full min-h-[450px] flex-col items-center justify-center gap-3 bg-[#08100f] px-8 text-center">
         <MapPinned className="h-10 w-10 text-cyanPulse" />
         <p className="text-sm font-semibold text-white">Interactive Google Map awaiting browser key</p>
         <p className="max-w-sm text-xs leading-5 text-slate-400">

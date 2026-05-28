@@ -41,7 +41,17 @@ import type {
 
 const initialArea: VisitorAreaId = "district-1";
 const initialCategory: CategoryId = "landmarks";
-const palette = ["#16d9ff", "#ff3bbd", "#ffb020", "#82f52c", "#9b7cff", "#44d7a8"];
+const brandColors = {
+  teal: "#00e5d4",
+  coral: "#ff5a70",
+  amber: "#ffd166",
+  leaf: "#18c7a1",
+  mint: "#7afbe4",
+  peach: "#ff8a72",
+  tick: "#a7b0c4",
+  grid: "rgba(122, 251, 228, 0.1)"
+};
+const palette = [brandColors.teal, brandColors.coral, brandColors.amber, brandColors.leaf, brandColors.peach, brandColors.mint];
 
 function compactNumber(value: number) {
   return Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
@@ -54,7 +64,7 @@ function readableType(value: string) {
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name?: string; value?: number }>; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-white/10 bg-[#071024]/95 px-3 py-2 text-xs shadow-2xl">
+    <div className="rounded-lg border border-cyanPulse/15 bg-[#0a0e14]/95 px-3 py-2 text-xs shadow-2xl">
       {label ? <p className="mb-1 font-semibold text-white">{label}</p> : null}
       {payload.map((item) => (
         <p key={`${item.name}-${item.value}`} className="text-slate-300">
@@ -85,9 +95,9 @@ function DestinationCard({ destination, rank }: { destination: Destination; rank
       href={destination.googleMapsUri}
       target="_blank"
       rel="noreferrer"
-      className="group grid grid-cols-[84px_1fr] gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 transition hover:border-cyanPulse/60 hover:bg-cyanPulse/[0.06]"
+      className="group grid grid-cols-[84px_1fr] gap-3 rounded-lg border border-cyanPulse/10 bg-white/[0.035] p-3 transition hover:border-cyanPulse/60 hover:bg-cyanPulse/[0.07]"
     >
-      <div className="relative h-[84px] overflow-hidden rounded-md bg-[#10203c]">
+      <div className="relative h-[84px] overflow-hidden rounded-md bg-[#101817]">
         {destination.photo ? (
           <Image src={destination.photo.proxyUrl} alt="" fill unoptimized className="object-cover transition group-hover:scale-105" />
         ) : (
@@ -95,7 +105,7 @@ function DestinationCard({ destination, rank }: { destination: Destination; rank
             <MapPin className="h-5 w-5" />
           </div>
         )}
-        <span className="absolute left-1.5 top-1.5 grid h-6 w-6 place-items-center rounded bg-ink/90 text-xs font-bold text-white">
+        <span className="absolute left-1.5 top-1.5 grid h-6 w-6 place-items-center rounded bg-ink/90 text-xs font-bold text-amberPulse">
           {rank}
         </span>
       </div>
@@ -215,7 +225,7 @@ export default function Home() {
               <p className="mt-1 text-sm text-slate-400">Discover highly reviewed experiences across familiar city districts.</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-400">
+          <div className="flex items-center gap-3 rounded-lg border border-cyanPulse/15 bg-black/20 px-4 py-3 text-xs text-slate-400">
             <ShieldCheck className="h-4 w-4 text-limePulse" />
             Live destination data and photos provided by Google Maps
           </div>
@@ -228,7 +238,7 @@ export default function Home() {
           <select
             value={selectedArea}
             onChange={(event) => setSelectedArea(event.target.value as VisitorAreaId)}
-            className="mt-2 block h-12 w-full rounded-md border border-white/10 bg-[#071024] px-3 text-sm text-white outline-none focus:border-cyanPulse"
+            className="mt-2 block h-12 w-full rounded-md border border-cyanPulse/15 bg-[#090d14] px-3 text-sm text-white outline-none focus:border-cyanPulse"
           >
             {(options?.areas ?? [{ id: initialArea, label: "District 1" }]).map((area) => (
               <option key={area.id} value={area.id}>
@@ -242,7 +252,7 @@ export default function Home() {
           <select
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value as CategoryId)}
-            className="mt-2 block h-12 w-full rounded-md border border-white/10 bg-[#071024] px-3 text-sm text-white outline-none focus:border-cyanPulse"
+            className="mt-2 block h-12 w-full rounded-md border border-cyanPulse/15 bg-[#090d14] px-3 text-sm text-white outline-none focus:border-cyanPulse"
           >
             {(options?.categories ?? [{ id: initialCategory, label: "Landmarks" }]).map((category) => (
               <option key={category.id} value={category.id}>
@@ -254,7 +264,7 @@ export default function Home() {
         <button
           type="submit"
           disabled={loading || !canDisplayPlaces}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-cyanPulse px-7 text-sm font-bold text-ink transition hover:bg-white disabled:cursor-wait disabled:opacity-70"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-cyanPulse px-7 text-sm font-bold text-ink shadow-glow transition hover:bg-amberPulse disabled:cursor-wait disabled:opacity-70"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
           {loading ? "Exploring" : "Explore"}
@@ -274,10 +284,10 @@ export default function Home() {
       ) : null}
 
       <section className="no-scrollbar grid auto-cols-[78%] grid-flow-col gap-3 overflow-x-auto sm:grid-flow-row sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={MapPin} label="Destinations found" value={String(destinations.length)} hint="Top live results in this visitor area" color="#16d9ff" />
-        <StatCard icon={Star} label="Average rating" value={averageRating ? averageRating.toFixed(2) : "N/A"} hint="Current displayed destinations" color="#ffb020" />
-        <StatCard icon={TrendingUp} label="Review volume" value={compactNumber(totalReviews)} hint="Google review count signal" color="#ff3bbd" />
-        <StatCard icon={Compass} label="Top destination" value={destinations[0]?.name ?? "--"} hint="Ranked by reviews, then rating" color="#82f52c" />
+        <StatCard icon={MapPin} label="Destinations found" value={String(destinations.length)} hint="Top live results in this visitor area" color={brandColors.teal} />
+        <StatCard icon={Star} label="Average rating" value={averageRating ? averageRating.toFixed(2) : "N/A"} hint="Current displayed destinations" color={brandColors.amber} />
+        <StatCard icon={TrendingUp} label="Review volume" value={compactNumber(totalReviews)} hint="Google review count signal" color={brandColors.coral} />
+        <StatCard icon={Compass} label="Top destination" value={destinations[0]?.name ?? "--"} hint="Ranked by reviews, then rating" color={brandColors.leaf} />
       </section>
 
       <section className="grid min-h-[590px] gap-4 xl:grid-cols-[1.65fr_0.85fr]">
@@ -322,11 +332,11 @@ export default function Home() {
           </div>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={destinations.slice(0, 7).map((destination) => ({ name: destination.name, reviews: destination.userRatingCount ?? 0 }))} layout="vertical" margin={{ left: 0, right: 12 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.08)" horizontal={false} />
-              <XAxis type="number" tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={(value) => compactNumber(Number(value))} />
+              <CartesianGrid stroke={brandColors.grid} horizontal={false} />
+              <XAxis type="number" tick={{ fill: brandColors.tick, fontSize: 10 }} tickFormatter={(value) => compactNumber(Number(value))} />
               <YAxis type="category" dataKey="name" hide />
               <Tooltip content={<ChartTooltip />} />
-              <Bar dataKey="reviews" fill="#ff3bbd" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="reviews" fill={brandColors.coral} radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </article>
@@ -338,11 +348,11 @@ export default function Home() {
           </div>
           <ResponsiveContainer width="100%" height={270}>
             <ScatterChart margin={{ left: -18, right: 8, top: 10 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.08)" />
-              <XAxis type="number" dataKey="rating" domain={[3, 5]} tick={{ fill: "#94a3b8", fontSize: 10 }} />
-              <YAxis type="number" dataKey="reviews" tick={{ fill: "#94a3b8", fontSize: 10 }} tickFormatter={(value) => compactNumber(Number(value))} />
+              <CartesianGrid stroke={brandColors.grid} />
+              <XAxis type="number" dataKey="rating" domain={[3, 5]} tick={{ fill: brandColors.tick, fontSize: 10 }} />
+              <YAxis type="number" dataKey="reviews" tick={{ fill: brandColors.tick, fontSize: 10 }} tickFormatter={(value) => compactNumber(Number(value))} />
               <Tooltip content={<ChartTooltip />} />
-              <Scatter data={destinations.map((destination) => ({ rating: destination.rating ?? 0, reviews: destination.userRatingCount ?? 0 }))} fill="#16d9ff" />
+              <Scatter data={destinations.map((destination) => ({ rating: destination.rating ?? 0, reviews: destination.userRatingCount ?? 0 }))} fill={brandColors.teal} />
             </ScatterChart>
           </ResponsiveContainer>
         </article>
@@ -368,10 +378,10 @@ export default function Home() {
             </ResponsiveContainer>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={ratingDistribution}>
-                <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 8 }} interval={0} />
+                <XAxis dataKey="name" tick={{ fill: brandColors.tick, fontSize: 8 }} interval={0} />
                 <YAxis hide />
                 <Tooltip content={<ChartTooltip />} />
-                <Bar dataKey="count" fill="#82f52c" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="count" fill={brandColors.leaf} radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

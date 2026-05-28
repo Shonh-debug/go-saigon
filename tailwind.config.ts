@@ -5,15 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#050816",
-        cyanPulse: "#16d9ff",
-        magentaPulse: "#ff3bbd",
-        limePulse: "#82f52c",
-        amberPulse: "#ffb020"
+        ink: "#06070d",
+        cyanPulse: "#00e5d4",
+        magentaPulse: "#ff5a70",
+        limePulse: "#18c7a1",
+        amberPulse: "#ffd166"
       },
       boxShadow: {
-        glow: "0 0 40px rgba(22, 217, 255, 0.18)",
-        magenta: "0 0 34px rgba(255, 59, 189, 0.18)"
+        glow: "0 0 40px rgba(0, 229, 212, 0.2)",
+        magenta: "0 0 34px rgba(255, 90, 112, 0.2)"
       }
     }
   },
