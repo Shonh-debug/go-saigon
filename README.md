@@ -2,7 +2,7 @@
 
 A live destination discovery web application that helps tourists find highly reviewed places across Ho Chi Minh City's familiar visitor districts, explore them on an interactive map, and compare popularity insights at a glance.
 
-**🌐 Live Site:** [go-saigon.vercel.app](https://go-saigon.vercel.app/)
+**Live Site:** [go-saigon.vercel.app](https://go-saigon.vercel.app/)
 
 ---
 
@@ -23,7 +23,7 @@ Go Saigon is a full-stack web application that integrates the **Google Places AP
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -58,7 +58,7 @@ Go Saigon is a full-stack web application that integrates the **Google Places AP
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```text
 src/
@@ -87,7 +87,7 @@ src/
 
 ---
 
-## 🔌 API Integration
+## API Integration
 
 The app uses the **Google Places API (New)** Nearby Search endpoint:
 
@@ -116,7 +116,7 @@ The Next.js API route (`/api/discovery/search`) acts as a **secure server layer*
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
 1. **Clone the repository**
    ```bash
