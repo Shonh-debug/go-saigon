@@ -86,7 +86,7 @@ Recommendation:
 - Start with a CSP compatible with Google Maps JavaScript, Google tile/image domains, Places photo proxy usage, and Vercel Analytics.
 - Consider shipping CSP in report-only mode first if the Google Maps allowlist needs tuning.
 
-### 3. Public Rate Limiting Fails Open Without Upstash Configuration
+### 3. Public Search Rate Limiting Fails Open Without Upstash Configuration
 
 Severity: Medium
 
@@ -96,14 +96,16 @@ Status: Fixed in the working tree after this audit.
 
 Impact:
 
-- Before the fix, if `UPSTASH_REDIS_REST_URL` or `UPSTASH_REDIS_REST_TOKEN` was missing in Vercel, public discovery and photo requests were effectively unlimited.
+- Before the fix, if `UPSTASH_REDIS_REST_URL` or `UPSTASH_REDIS_REST_TOKEN` was missing in Vercel, public discovery searches were effectively unlimited.
 - That could increase Google Places API cost exposure and create a denial-of-wallet risk.
 
 Evidence:
 
 - `createLimiter()` returns `undefined` when Redis config is missing.
 - `checkDiscoveryLimit()` now returns `{ success: false, reason: "RATE_LIMIT_NOT_CONFIGURED" }` in production when no limiter exists.
-- `/api/discovery/search` and `/api/discovery/photo` now return `503` for missing production rate-limit configuration.
+- `/api/discovery/search` now returns `503` for missing production rate-limit configuration.
+- `/api/discovery/search` is limited to 20 requests per 5 minutes per client IP when Upstash is configured.
+- `/api/discovery/photo` is no longer rate-limited because photo URLs are signed, short-lived, and validated before proxying.
 - Local development still allows requests without Upstash configuration.
 
 Remaining requirement:

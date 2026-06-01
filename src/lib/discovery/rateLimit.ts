@@ -12,7 +12,7 @@ function getLimiter() {
   if (!limiter) {
     limiter = new Ratelimit({
       redis: new Redis({ url, token }),
-      limiter: Ratelimit.slidingWindow(20, "10 m"),
+      limiter: Ratelimit.slidingWindow(20, "5 m"),
       analytics: true,
       prefix: "maps-pulse:discovery"
     });

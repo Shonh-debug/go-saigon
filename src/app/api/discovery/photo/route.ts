@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkDiscoveryLimit, RATE_LIMIT_NOT_CONFIGURED } from "@/lib/discovery/rateLimit";
 import { fetchPlacePhoto, PlacesConfigurationError, validatePhotoReference } from "@/lib/googlePlaces";
 
 export const dynamic = "force-dynamic";
 const noStoreHeaders = { "Cache-Control": "no-store" };
 
 export async function GET(request: NextRequest) {
-  const limit = await checkDiscoveryLimit(request);
-  if (!limit.success) {
-    const isMissingLimiter = "reason" in limit && limit.reason === RATE_LIMIT_NOT_CONFIGURED;
-    return new NextResponse(null, { status: isMissingLimiter ? 503 : 429, headers: noStoreHeaders });
-  }
-
   const reference = request.nextUrl.searchParams.get("ref") ?? "";
   const expires = request.nextUrl.searchParams.get("expires") ?? "";
   const signature = request.nextUrl.searchParams.get("signature") ?? "";
