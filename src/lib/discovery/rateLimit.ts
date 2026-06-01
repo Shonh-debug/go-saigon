@@ -3,6 +3,7 @@ import { Redis } from "@upstash/redis";
 import type { NextRequest } from "next/server";
 
 let limiter: Ratelimit | undefined;
+export const RATE_LIMIT_NOT_CONFIGURED = "RATE_LIMIT_NOT_CONFIGURED";
 
 function getLimiter() {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -21,7 +22,12 @@ function getLimiter() {
 
 export async function checkDiscoveryLimit(request: NextRequest) {
   const activeLimiter = getLimiter();
-  if (!activeLimiter) return { success: true };
+  if (!activeLimiter) {
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, reason: RATE_LIMIT_NOT_CONFIGURED };
+    }
+    return { success: true };
+  }
   const identifier = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
   return activeLimiter.limit(identifier);
 }
