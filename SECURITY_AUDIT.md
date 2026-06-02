@@ -105,7 +105,7 @@ Evidence:
 - `checkDiscoveryLimit()` now returns `{ success: false, reason: "RATE_LIMIT_NOT_CONFIGURED" }` in production when no limiter exists.
 - `/api/discovery/search` now returns `503` for missing production rate-limit configuration.
 - `/api/discovery/search` is limited to 20 requests per 5 minutes per client IP when Upstash is configured.
-- `/api/discovery/photo` is no longer rate-limited because photo URLs are signed, short-lived, and validated before proxying.
+- `/api/discovery/photo` validates signed photo URLs first, then applies a separate 200 requests per 5 minutes per client IP limit when Upstash is configured.
 - Local development still allows requests without Upstash configuration.
 
 Remaining requirement:

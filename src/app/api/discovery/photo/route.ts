@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkPhotoLimit, RATE_LIMIT_NOT_CONFIGURED } from "@/lib/discovery/rateLimit";
 import { fetchPlacePhoto, PlacesConfigurationError, validatePhotoReference } from "@/lib/googlePlaces";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,13 @@ export async function GET(request: NextRequest) {
   try {
     const photoName = validatePhotoReference(reference, expires, signature);
     if (!photoName) return new NextResponse(null, { status: 400, headers: noStoreHeaders });
+
+    const limit = await checkPhotoLimit(request);
+    if (!limit.success) {
+      const isMissingLimiter = "reason" in limit && limit.reason === RATE_LIMIT_NOT_CONFIGURED;
+      return new NextResponse(null, { status: isMissingLimiter ? 503 : 429, headers: noStoreHeaders });
+    }
+
     const response = await fetchPlacePhoto(photoName);
     if (!response.ok) return new NextResponse(null, { status: response.status, headers: noStoreHeaders });
     const payload = (await response.json()) as { photoUri?: string };

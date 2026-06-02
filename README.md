@@ -146,7 +146,7 @@ The Next.js API route (`/api/discovery/search`) acts as a **secure server layer*
    ```
    > Create keys in the [Google Maps Platform Console](https://console.cloud.google.com/google/maps-apis/credentials). Restrict the server key to Places API (New), and restrict the browser key by HTTP referrer and Maps JavaScript API.
 
-   > Upstash Redis can be left blank for local development, but it is required in production. Without Upstash configured on Vercel, discovery searches fail closed with `503` instead of allowing unlimited public Google API traffic. Signed photo URLs are not rate-limited because they are short-lived and HMAC-protected.
+   > Upstash Redis can be left blank for local development, but it is required in production. Without Upstash configured on Vercel, discovery searches and signed photo requests fail closed with `503` instead of allowing unlimited public Google API traffic. Discovery searches are limited to 20 requests per 5 minutes per IP, while signed photo requests use a separate 200 requests per 5 minutes per IP quota.
 
 4. **Run database migrations (optional persistence)**
    ```bash
@@ -172,8 +172,8 @@ The app is designed for deployment through **Vercel** linked to the GitHub repos
 | `GOOGLE_MAPS_API_KEY` | Server-only Google Places API (New) key used by discovery and photo routes |
 | `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` | HTTP-referrer-restricted browser key used to render the Google Map |
 | `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | Google Maps map ID used by the interactive destination map |
-| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL used to rate-limit public discovery searches |
-| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token used to rate-limit public discovery searches |
+| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL used to rate-limit public discovery searches and signed photo requests |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token used to rate-limit public discovery searches and signed photo requests |
 
 The discovery and photo routes use `Cache-Control: no-store` so Google place display content is retrieved live rather than persisted as a cached destination catalog.
 
