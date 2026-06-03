@@ -59,32 +59,37 @@ Recommendation:
 
 Severity: Medium
 
-The deployed app currently sends HSTS, but does not send several common browser security headers.
+Status: Fixed in the working tree after this audit.
 
-Missing headers observed:
+The deployed app previously sent HSTS, but did not send several common browser security headers.
+
+Headers now configured in `next.config.mjs`:
 
 - `Content-Security-Policy`
-- `X-Frame-Options` or equivalent `frame-ancestors` CSP directive
+- `Strict-Transport-Security`
+- `X-Frame-Options`
 - `X-Content-Type-Options`
 - `Referrer-Policy`
 - `Permissions-Policy`
+- `Cross-Origin-Opener-Policy`
 
 Impact:
 
-- A missing CSP increases impact if any future XSS bug is introduced.
-- Missing frame protections can allow clickjacking unless constrained elsewhere.
-- Missing `nosniff` and referrer controls weakens browser hardening.
+- CSP constrains which scripts, styles, images, connections, workers, and frames the browser may load.
+- Frame protections reduce clickjacking risk.
+- `nosniff` reduces MIME-sniffing attacks.
+- Referrer controls reduce accidental URL leakage to external sites.
+- Permissions Policy disables unnecessary browser capabilities such as camera, microphone, payment, and USB.
 
 Evidence:
 
-- `curl -sSI https://go-saigon.vercel.app/` showed `strict-transport-security`, but not the headers above.
-- `next.config.mjs` currently only sets `reactStrictMode`.
+- Before the fix, `curl -sSI https://go-saigon.vercel.app/` showed `strict-transport-security`, but not the headers above.
+- `next.config.mjs` now defines a site-wide `headers()` block.
 
-Recommendation:
+Remaining requirement:
 
-- Add a `headers()` block in `next.config.mjs`.
-- Start with a CSP compatible with Google Maps JavaScript, Google tile/image domains, Places photo proxy usage, and Vercel Analytics.
-- Consider shipping CSP in report-only mode first if the Google Maps allowlist needs tuning.
+- Redeploy the app so Vercel serves the new headers.
+- After deployment, verify the live site still loads Google Maps, map tiles, proxied photos, and Vercel Analytics without CSP violations.
 
 ### 3. Public Search Rate Limiting Fails Open Without Upstash Configuration
 
