@@ -1,6 +1,13 @@
 import type { NextRequest } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { checkDiscoveryLimit, checkPhotoLimit, RATE_LIMIT_NOT_CONFIGURED, RATE_LIMITS } from "./rateLimit";
+import {
+  checkDiscoveryLimit,
+  checkPhotoLimit,
+  getNextUtcMonthStartEpochSeconds,
+  getPhotoBudgetMonth,
+  RATE_LIMIT_NOT_CONFIGURED,
+  RATE_LIMITS
+} from "./rateLimit";
 
 function request() {
   return new Request("https://go-saigon.test/api/discovery/search", {
@@ -38,10 +45,14 @@ describe("discovery rate limiting", () => {
       window: "5 m",
       prefix: "maps-pulse:discovery"
     });
-    expect(RATE_LIMITS.photo).toEqual({
-      requests: 200,
-      window: "5 m",
-      prefix: "maps-pulse:photo"
+    expect(RATE_LIMITS.photoIp).toEqual({
+      requests: 60,
+      window: "1 d",
+      prefix: "maps-pulse:photo-ip"
+    });
+    expect(RATE_LIMITS.photoMonthly).toEqual({
+      requests: 940,
+      prefix: "maps-pulse:photo-monthly"
     });
   });
 
@@ -54,5 +65,15 @@ describe("discovery rate limiting", () => {
       success: false,
       reason: RATE_LIMIT_NOT_CONFIGURED
     });
+  });
+
+  it("keys the global photo budget by UTC month", () => {
+    expect(getPhotoBudgetMonth(new Date("2026-06-03T15:30:00.000Z"))).toBe("2026-06");
+    expect(getPhotoBudgetMonth(new Date("2026-12-31T23:59:59.000Z"))).toBe("2026-12");
+  });
+
+  it("resets the global photo budget at the next UTC month", () => {
+    expect(getNextUtcMonthStartEpochSeconds(new Date("2026-06-03T15:30:00.000Z"))).toBe(1_782_864_000);
+    expect(getNextUtcMonthStartEpochSeconds(new Date("2026-12-31T23:59:59.000Z"))).toBe(1_798_761_600);
   });
 });

@@ -5,20 +5,23 @@ import type { NextRequest } from "next/server";
 export const RATE_LIMIT_NOT_CONFIGURED = "RATE_LIMIT_NOT_CONFIGURED";
 export const RATE_LIMITS = {
   discovery: { requests: 20, window: "5 m", prefix: "maps-pulse:discovery" },
-  photo: { requests: 200, window: "5 m", prefix: "maps-pulse:photo" }
+  photoIp: { requests: 60, window: "1 d", prefix: "maps-pulse:photo-ip" },
+  photoMonthly: { requests: 940, prefix: "maps-pulse:photo-monthly" }
 } as const;
 
 let discoveryLimiter: Ratelimit | undefined;
-let photoLimiter: Ratelimit | undefined;
+let photoIpLimiter: Ratelimit | undefined;
+let redisClient: Redis | undefined;
 
 function getRedis() {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!url || !token) return undefined;
-  return new Redis({ url, token });
+  if (!redisClient) redisClient = new Redis({ url, token });
+  return redisClient;
 }
 
-function getLimiter(kind: keyof typeof RATE_LIMITS) {
+function getLimiter(kind: "discovery" | "photoIp") {
   const redis = getRedis();
   if (!redis) return undefined;
 
@@ -34,18 +37,30 @@ function getLimiter(kind: keyof typeof RATE_LIMITS) {
     return discoveryLimiter;
   }
 
-  if (!photoLimiter) {
-    photoLimiter = new Ratelimit({
+  if (!photoIpLimiter) {
+    photoIpLimiter = new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(RATE_LIMITS.photo.requests, RATE_LIMITS.photo.window),
+      limiter: Ratelimit.slidingWindow(RATE_LIMITS.photoIp.requests, RATE_LIMITS.photoIp.window),
       analytics: true,
-      prefix: RATE_LIMITS.photo.prefix
+      prefix: RATE_LIMITS.photoIp.prefix
     });
   }
-  return photoLimiter;
+  return photoIpLimiter;
 }
 
-async function checkLimit(request: NextRequest, kind: keyof typeof RATE_LIMITS) {
+function getIdentifier(request: NextRequest) {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+}
+
+export function getPhotoBudgetMonth(date = new Date()) {
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+export function getNextUtcMonthStartEpochSeconds(date = new Date()) {
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 1) / 1000;
+}
+
+async function checkLimit(request: NextRequest, kind: "discovery" | "photoIp") {
   const activeLimiter = getLimiter(kind);
   if (!activeLimiter) {
     if (process.env.NODE_ENV === "production") {
@@ -53,8 +68,21 @@ async function checkLimit(request: NextRequest, kind: keyof typeof RATE_LIMITS) 
     }
     return { success: true };
   }
-  const identifier = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
-  return activeLimiter.limit(identifier);
+  return activeLimiter.limit(getIdentifier(request));
+}
+
+async function checkMonthlyPhotoBudget(redis: Redis) {
+  const key = `${RATE_LIMITS.photoMonthly.prefix}:${getPhotoBudgetMonth()}`;
+  const count = await redis.incr(key);
+  if (count === 1) {
+    await redis.expireat(key, getNextUtcMonthStartEpochSeconds());
+  }
+  return {
+    success: count <= RATE_LIMITS.photoMonthly.requests,
+    limit: RATE_LIMITS.photoMonthly.requests,
+    remaining: Math.max(0, RATE_LIMITS.photoMonthly.requests - count),
+    reset: getNextUtcMonthStartEpochSeconds() * 1000
+  };
 }
 
 export async function checkDiscoveryLimit(request: NextRequest) {
@@ -62,5 +90,16 @@ export async function checkDiscoveryLimit(request: NextRequest) {
 }
 
 export async function checkPhotoLimit(request: NextRequest) {
-  return checkLimit(request, "photo");
+  const redis = getRedis();
+  if (!redis) {
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, reason: RATE_LIMIT_NOT_CONFIGURED };
+    }
+    return { success: true };
+  }
+
+  const ipLimit = await checkLimit(request, "photoIp");
+  if (!ipLimit.success) return ipLimit;
+
+  return checkMonthlyPhotoBudget(redis);
 }
