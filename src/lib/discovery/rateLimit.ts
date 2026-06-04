@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 export const RATE_LIMIT_NOT_CONFIGURED = "RATE_LIMIT_NOT_CONFIGURED";
 export const RATE_LIMITS = {
   discovery: { requests: 20, window: "5 m", prefix: "maps-pulse:discovery" },
-  photoIp: { requests: 60, window: "1 d", prefix: "maps-pulse:photo-ip" },
+  photoIp: { requests: 100, window: "1 d", prefix: "maps-pulse:photo-ip" },
   photoMonthly: { requests: 940, prefix: "maps-pulse:photo-monthly" }
 } as const;
 

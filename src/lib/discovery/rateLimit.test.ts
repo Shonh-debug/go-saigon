@@ -46,7 +46,7 @@ describe("discovery rate limiting", () => {
       prefix: "maps-pulse:discovery"
     });
     expect(RATE_LIMITS.photoIp).toEqual({
-      requests: 60,
+      requests: 100,
       window: "1 d",
       prefix: "maps-pulse:photo-ip"
     });

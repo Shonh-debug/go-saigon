@@ -146,7 +146,7 @@ The Next.js API route (`/api/discovery/search`) acts as a **secure server layer*
    ```
    > Create keys in the [Google Maps Platform Console](https://console.cloud.google.com/google/maps-apis/credentials). Restrict the server key to Places API (New), and restrict the browser key by HTTP referrer and Maps JavaScript API.
 
-   > Upstash Redis can be left blank for local development, but it is required in production. Without Upstash configured on Vercel, discovery searches and signed photo requests fail closed with `503` instead of allowing unlimited public Google API traffic. Discovery searches are limited to 20 requests per 5 minutes per IP. Signed photo requests are limited to 60 requests per day per IP plus a global 940-request monthly photo budget.
+   > Upstash Redis can be left blank for local development, but it is required in production. Without Upstash configured on Vercel, discovery searches and signed photo requests fail closed with `503` instead of allowing unlimited public Google API traffic. Discovery searches are limited to 20 requests per 5 minutes per IP. Signed photo requests are limited to 100 requests per day per IP plus a global 940-request monthly photo budget.
 
 4. **Run database migrations (optional persistence)**
    ```bash
